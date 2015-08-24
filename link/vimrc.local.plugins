@@ -1,0 +1,4 @@
+Plug 'justinmk/vim-sneak'
+Plug 'tpope/vim-vinegar'
+Plug 'tpope/vim-obsession'
+Plug 'rizzatti/dash.vim'

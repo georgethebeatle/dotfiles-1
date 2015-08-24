@@ -1,0 +1,3 @@
+[submodule "vimfiles"]
+	path = vimfiles
+	url = http://github.com/luan/vimfiles
