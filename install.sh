@@ -128,6 +128,7 @@ function karabinerize {
 
 function teach_a_man_to_fish {
   curl -L https://github.com/oh-my-fish/oh-my-fish/raw/master/tools/install.fish | fish || true
+  ln -s "$PWD/fish/custom" ~/.oh-my-fish/custom
   omf install | fish
   chsh -s /usr/local/bin/fish
 }
