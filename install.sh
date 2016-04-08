@@ -4,7 +4,7 @@ set -e
 set -x
 
 
-TAPS=( "neovim/homebrew-neovim" "choppsv1/term24" )
+TAPS=( git-duet/tap )
 
 FORMULAS=( 
   coreutils 
@@ -12,18 +12,35 @@ FORMULAS=(
   ack 
   git 
   ssh-copy-id 
-  "choppsv1/term24/tmux"
   reattach-to-user-namespace 
   go 
   "caskroom/cask/brew-cask" 
   fish
   python3
   hugo
+  docker
+  docker-machine
+  direnv
+  jq
+  tig
+  tmate
+  tmux
+  tree
+  watch
+  pstree
+  jsonpp
+  ruby
+  chruby
+  git-duet
 )
 
-CASKS=( karabiner seil slack iterm2 )
+CASKS=( karabiner seil slack iterm2 flycut screenhero vagrant virtualbox )
 
-HEAD_FORMULAS=("neovim")
+HEAD_FORMULAS=()
+
+PROJECTS=(
+  https://github.com/cloudfoundry-incubator/garden-linux
+)
 
 # much of this is stolen from https://github.com/mathiasbynens/dotfiles/blob/master/brew.sh
 
@@ -41,6 +58,9 @@ function brew_stuff {
   for tap in ${TAPS[@]}; do
     brew tap $tap
   done
+
+  brew update
+  brew upgrade
 
   for formula in ${FORMULAS[@]}; do
     brew install $formula
@@ -83,11 +103,7 @@ function setup_iterm {
 function install_luan_vim {
   [ -f ~/.envrc ] && source ~/.envrc
 
-  alias vim=nvim # make sure we get the nvim vimfiles
-  sudo easy_install pip
-  sudo pip3 install neovim
-
-  pushd vimfiles
+  pushd vimfiles -u
   ./install
   popd
 
@@ -103,8 +119,6 @@ function link_stuff {
     ln -s "$PWD/$i" ~/.$i || echo "not overriding existing symlink ~/.$i"
   done
   popd
-
-  ln -sf "$PWD/fish/config.fish" ~/.config/fish/config.fish
 }
 
 function karabinerize {
@@ -126,13 +140,28 @@ function karabinerize {
   fi
 }
 
-function teach_a_man_to_fish {
-  curl -L https://github.com/oh-my-fish/oh-my-fish/raw/master/tools/install.fish | fish || true
-  ln -s "$PWD/fish/custom" ~/.oh-my-fish/custom
-  omf install | fish
-  chsh -s /usr/local/bin/fish
+function fetch_projects {
+  for project in ${PROJECTS[@]}; do
+    fetch_project $project
+  done
 }
 
+function fetch_project {
+  PROJECT=$1
+  PROJECT_NAME=$(basename $PROJECT)
+  WORKSPACE="${HOME}/workspace"
+
+  if [ -d "${WORKSPACE}/${PROJECT_NAME}" ]; then
+    echo "Avoiding ${PROJECT} to avoid messing your life up"
+  else
+    pushd ${HOME}/workspace
+      git clone $PROJECT 
+      pushd $PROJECT_NAME 
+        git submodule update --init --recursive
+      popd
+    popd
+  fi
+}
 
 cd $(dirname "${0}")
 git submodule update --init --recursive # just to be sure
@@ -140,9 +169,9 @@ git submodule update --init --recursive # just to be sure
 keep_sudo
 brew_stuff
 osx_defaults
-teach_a_man_to_fish
 install_luan_vim
 link_stuff
-karabinerize
-setup_iterm
+#karabinerize
+#setup_iterm
+fetch_projects
 
