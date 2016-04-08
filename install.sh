@@ -7,34 +7,41 @@ set -x
 TAPS=( git-duet/tap )
 
 FORMULAS=( 
-  coreutils 
   ag 
   ack 
-  git 
-  ssh-copy-id 
-  reattach-to-user-namespace 
-  go 
   "caskroom/cask/brew-cask" 
-  fish
-  python3
-  hugo
+  chruby
+  coreutils 
+  direnv
   docker
   docker-machine
-  direnv
+  git 
+  git-duet
+  go 
   jq
+  jsonpp
+  pstree
+  python3
+  reattach-to-user-namespace 
+  ruby
+  ssh-copy-id 
   tig
   tmate
   tmux
   tree
   watch
-  pstree
-  jsonpp
-  ruby
-  chruby
-  git-duet
 )
 
-CASKS=( karabiner seil slack iterm2 flycut screenhero vagrant virtualbox )
+CASKS=( 
+  flycut 
+  iterm2 
+  karabiner 
+  seil 
+  slack 
+  screenhero 
+  vagrant 
+  virtualbox 
+)
 
 HEAD_FORMULAS=()
 
