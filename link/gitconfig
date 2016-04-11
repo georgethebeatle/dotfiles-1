@@ -55,8 +55,3 @@
 [mergetool "sourcetree"]
     cmd = /opt/homebrew-cask/Caskroom/sourcetree/2.0.5.6/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
     trustExitCode = true
-[duet "env"]
-	git-author-initials = wm
-	git-author-name = Will Martin
-	git-author-email = wmartin@pivotal.io
-	mtime = 1460136777
