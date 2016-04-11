@@ -2,7 +2,7 @@
 
 set -e
 
-TAPS=( git-duet/tap )
+TAPS=( caskroom/versions git-duet/tap )
 
 FORMULAS=( 
   ag 
@@ -32,7 +32,7 @@ FORMULAS=(
 
 CASKS=( 
   flycut 
-  iterm2 
+  iterm2-beta
   slack 
   screenhero 
   vagrant 
