@@ -33,8 +33,6 @@ FORMULAS=(
 CASKS=( 
   flycut 
   iterm2 
-  karabiner 
-  seil 
   slack 
   screenhero 
   vagrant 
@@ -44,7 +42,9 @@ CASKS=(
 HEAD_FORMULAS=()
 
 PROJECTS=(
-  https://github.com/cloudfoundry-incubator/garden-linux
+  https://github.com/cloudfoundry-incubator/garden-linux-release
+  https://github.com/cloudfoundry-incubator/guardian-release
+  https://github.com/cloudfoundry/bosh-lite
 )
 
 # much of this is stolen from https://github.com/mathiasbynens/dotfiles/blob/master/brew.sh
@@ -55,6 +55,22 @@ function keep_sudo {
 
   # Keep-alive: update existing `sudo` time stamp until the script has finished.
   while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+}
+
+function check_ssh_keys {
+  ssh-add -l || return 1
+}
+
+function check_existing_stuff {
+  pushd link
+  for i in *; do
+    if [ -e "$HOME/.$i" ] && [ "$(readlink $HOME/.$i)" != "$PWD/$i" ]; then
+      echo "WARNING: intended symlink ~/.$i exists. Continue? y/n    (if you continue this file will be skipped and NOT overwritten)"
+      read yesorno
+      [ "x$yesorno" != "xy" ] && exit 1
+    fi
+  done
+  popd
 }
 
 function brew_stuff {
@@ -121,28 +137,19 @@ function install_luan_vim {
 function link_stuff {
   pushd link
   for i in *; do
-    ln -s "$PWD/$i" ~/.$i || echo "not overriding existing symlink ~/.$i"
+    echo "Symlinking: $HOME/.$i -> $PWD/$i"
+    ln -s "$PWD/$i" $HOME/.$i || echo "not overriding existing file ~/.$i"
   done
   popd
 }
 
-function karabinerize {
-  SEIL=/Applications/Seil.app/Contents/Library/bin/seil
-  if [ -e "$SEIL" ]; then
-    $SEIL set enable_capslock 1
-    $SEIL set keycode_capslock 80
-    $SEIL export
+function bash_it {
+  if [ ! -d ~/.bash_it ]; then
+    git clone --depth=1 https://github.com/Bash-it/bash-it.git $HOME/.bash_it
+    $HOME/.bash_it/install.sh --none
   fi
 
-  KARABINER=/Applications/Karabiner.app/Contents/Library/bin/karabiner
-  if [ -e "$KARABINER" ]; then
-    $KARABINER set repeat.wait 20
-    $KARABINER set repeat.initial_wait 60
-    $KARABINER set remap.simple_vi_mode 1
-    $KARABINER set remap.controlL2controlL_escape 1
-    $KARABINER set bilalh.remap.f19_escape_control 1
-    $KARABINER set remap.shiftDelete2tilde 1
-  fi
+  cp "$PWD"/bash-it-custom/*.bash "$HOME"/.bash_it/custom/
 }
 
 function fetch_projects {
@@ -168,15 +175,30 @@ function fetch_project {
   fi
 }
 
+function chilli_con_concourse {
+  mkdir -p ~/workspace/concourse-lite
+  pushd ~/workspace/concourse-lite
+  vagrant init concourse/lite
+  vagrant up
+  curl $SOMEWHERE /usr/local/bin/fly
+}
+
 cd $(dirname "${0}")
 git submodule update --init --recursive # just to be sure
 
 keep_sudo
+check_ssh_keys || (echo "Make sure your ssh keys are set up (e.g. run ssh-keygen or put in your USB key) before running" && exit 1)
+check_existing_stuff
+link_stuff
 brew_stuff
+bash_it
 osx_defaults
 install_luan_vim
-link_stuff
-#karabinerize
-#setup_iterm
+setup_iterm
+chilli_con_concourse
 fetch_projects
+
+echo
+echo "DONE. Now run bash -l or re-log in to pick up changes"
+
 
