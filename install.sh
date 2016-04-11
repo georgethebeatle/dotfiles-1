@@ -176,11 +176,17 @@ function fetch_project {
 }
 
 function chilli_con_concourse {
-  mkdir -p ~/workspace/concourse-lite
   pushd ~/workspace/concourse-lite
-  vagrant init concourse/lite
-  vagrant up
-  curl $SOMEWHERE /usr/local/bin/fly
+  if [ ! -d ~/workspace/concourse-lite ]; then
+    mkdir -p ~/workspace/concourse-lite
+    vagrant init concourse/lite
+
+    vagrant up
+  fi
+  popd
+
+  curl 'http://192.168.100.4:8080/api/v1/cli?arch=amd64&platform=darwin' > /usr/local/bin/fly
+  chmod +x /usr/local/bin/fly
 }
 
 cd $(dirname "${0}")
@@ -200,5 +206,3 @@ fetch_projects
 
 echo
 echo "DONE. Now run bash -l or re-log in to pick up changes"
-
-
