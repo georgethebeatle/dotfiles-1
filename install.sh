@@ -13,6 +13,7 @@ FORMULAS=(
   direnv
   docker
   docker-machine
+  fasd
   git 
   git-duet
   go 
@@ -27,14 +28,18 @@ FORMULAS=(
   tmate
   tmux
   tree
+  vim
   watch
 )
 
 CASKS=( 
   flycut 
+  google-chrome
   iterm2-beta
   slack 
+  skype
   screenhero 
+  shiftit
   vagrant 
   virtualbox 
 )
@@ -43,8 +48,9 @@ HEAD_FORMULAS=()
 
 PROJECTS=(
   https://github.com/cloudfoundry-incubator/garden-linux-release
-  https://github.com/cloudfoundry-incubator/guardian-release
+  https://github.com/cloudfoundry-incubator/garden-runc-release
   https://github.com/cloudfoundry/bosh-lite
+  https://github.com/concourse/concourse-lite
 )
 
 # much of this is stolen from https://github.com/mathiasbynens/dotfiles/blob/master/brew.sh
@@ -201,8 +207,8 @@ bash_it
 osx_defaults
 install_luan_vim
 setup_iterm
-chilli_con_concourse
 fetch_projects
+# chilli_con_concourse
 
 echo
 echo "DONE. Now run bash -l or re-log in to pick up changes"
