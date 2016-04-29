@@ -16,3 +16,6 @@ function blup() {
 }
 
 alias resprout='pushd ~/workspace/sprout-wrap/cf-garden; git pull --rebase && soloist; popd'
+
+alias z='fasd_cd -d'
+alias z='fasd_cd -d -i'
